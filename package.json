@@ -1,0 +1,30 @@
+{
+  "name": "videostreams",
+  "version": "1.0.0",
+  "description": "DAZN code challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vgaltes/VideoStreams.git"
+  },
+  "author": "Vicenç García Altés",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vgaltes/VideoStreams/issues"
+  },
+  "homepage": "https://github.com/vgaltes/VideoStreams#readme",
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-react": "^7.11.1",
+    "jest": "^23.6.0",
+    "prettier": "^1.14.3"
+  }
+}
