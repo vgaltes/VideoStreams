@@ -2,25 +2,26 @@ const uuidv4 = require("uuid/v4");
 const watchStream = require("../../../src/functions/user/watchStream");
 const listStreams = require("../../../src/functions/user/listStreams");
 const videoStreamsDb = require("../../lib/videoStreamsDb");
+const lambdaInvoker = require("../../lib/lambdaInvoker");
 
-function callHandler(lambda, pathParameters, body) {
-  const context = {};
-  const event = {
-    body: JSON.stringify(body),
-    pathParameters
-  };
+// function callHandler(lambda, pathParameters, body) {
+//   const context = {};
+//   const event = {
+//     body: JSON.stringify(body),
+//     pathParameters
+//   };
 
-  return new Promise((resolve, reject) => {
-    lambda.handler(event, context, (err, response) => {
-      if (err) {
-        reject(err);
-      } else {
-        response.body = JSON.parse(response.body);
-        resolve(response);
-      }
-    });
-  });
-}
+//   return new Promise((resolve, reject) => {
+//     lambda.handler(event, context, (err, response) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         response.body = JSON.parse(response.body);
+//         resolve(response);
+//       }
+//     });
+//   });
+// }
 
 describe("Given a user is not watching any video stream", () => {
   const userId = uuidv4();
@@ -32,7 +33,7 @@ describe("Given a user is not watching any video stream", () => {
   });
 
   test("she should be able to watch a new video", async () => {
-    const response = await callHandler(
+    const response = await lambdaInvoker.call(
       watchStream,
       { user_id: userId },
       { video_id: videoId }
@@ -57,14 +58,14 @@ describe("Given a user is already watching two video streams", () => {
   });
 
   test("she should be able to watch a new video, but not another one", async () => {
-    let response = await callHandler(
+    let response = await lambdaInvoker.call(
       watchStream,
       { user_id: userId },
       { video_id: videoId }
     );
     expect(response.statusCode).toBe(200);
 
-    response = await callHandler(
+    response = await lambdaInvoker.call(
       watchStream,
       { user_id: userId },
       { video_id: uuidv4() }
@@ -74,7 +75,7 @@ describe("Given a user is already watching two video streams", () => {
       message: "User watching too many video streams."
     });
 
-    response = await callHandler(listStreams, { user_id: userId });
+    response = await lambdaInvoker.call(listStreams, { user_id: userId });
     expect(response.statusCode).toBe(200);
     expect(response.body.streams.length).toBe(3);
   });
