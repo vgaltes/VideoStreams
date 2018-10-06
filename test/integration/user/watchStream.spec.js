@@ -4,25 +4,6 @@ const listStreams = require("../../../src/functions/user/listStreams");
 const videoStreamsDb = require("../../lib/videoStreamsDb");
 const lambdaInvoker = require("../../lib/lambdaInvoker");
 
-// function callHandler(lambda, pathParameters, body) {
-//   const context = {};
-//   const event = {
-//     body: JSON.stringify(body),
-//     pathParameters
-//   };
-
-//   return new Promise((resolve, reject) => {
-//     lambda.handler(event, context, (err, response) => {
-//       if (err) {
-//         reject(err);
-//       } else {
-//         response.body = JSON.parse(response.body);
-//         resolve(response);
-//       }
-//     });
-//   });
-// }
-
 describe("Given a user is not watching any video stream", () => {
   const userId = uuidv4();
   const videoId = uuidv4();
