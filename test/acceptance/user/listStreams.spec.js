@@ -25,8 +25,8 @@ describe("Given a user is already watching some video streams", () => {
     const url = `${apiBasePath}/user/${userId}/streams`;
     return callHttp(url).then(response => {
       expect(response.statusCode).toBe(200);
-      const streams = JSON.parse(response.body);
-      expect(streams.length).toBe(numberOfStreams);
+      const body = JSON.parse(response.body);
+      expect(body.streams.length).toBe(numberOfStreams);
     });
   });
 });

@@ -35,7 +35,6 @@ describe("Given a user is already watching some video streams", () => {
     const response = await callHandler({ user_id: userId });
 
     expect(response.statusCode).toBe(200);
-    const streams = JSON.parse(response.body);
-    expect(streams.length).toBe(numberOfStreams);
+    expect(response.body.streams.length).toBe(numberOfStreams);
   });
 });
