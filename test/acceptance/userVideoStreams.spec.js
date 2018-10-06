@@ -17,8 +17,7 @@ describe("Given a user is not watching any video stream", () => {
       .then(res => {
         expect(res.ok).toBe(true);
         expect(res.body).toEqual({
-          video_id: videoId,
-          stream_id: expect.any(String)
+          video_id: videoId
         });
       });
   });

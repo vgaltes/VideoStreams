@@ -34,6 +34,7 @@
     "superagent": "^4.0.0-beta.5"
   },
   "dependencies": {
+    "aws-sdk": "^2.329.0",
     "uuid": "^3.3.2"
   }
 }
