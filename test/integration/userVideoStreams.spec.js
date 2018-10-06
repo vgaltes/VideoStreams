@@ -36,7 +36,7 @@ function insertVideoStream(userId, videoId) {
   return dynamoDb.put(params).promise();
 }
 
-function fillUserVideoStreams(userId) {
+async function fillUserVideoStreams(userId) {
   return Promise.all([
     insertVideoStream(userId, uuidv4()),
     insertVideoStream(userId, uuidv4()),
@@ -47,6 +47,11 @@ function fillUserVideoStreams(userId) {
 describe("Given a user is not watching any video stream", () => {
   const userId = uuidv4();
   const videoId = uuidv4();
+
+  beforeAll(() => {
+    // TODO: retrieve from SSM. Probably refactor to another file.
+    process.env.videoStreamsTableName = "videoStreams-dev";
+  });
 
   test("she should be able to watch a new video", async () => {
     const response = await callHandler(

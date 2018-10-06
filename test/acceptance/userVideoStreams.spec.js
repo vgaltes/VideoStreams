@@ -6,7 +6,7 @@ describe("Given a user is not watching any video stream", () => {
   const videoId = uuidv4();
   // TODO: get the api_url from SSM. For now, let's have it hardcoded.
   const apiBasePath =
-    "https://ivgph7b9s5.execute-api.eu-west-1.amazonaws.com/dev/";
+    "https://8yocvbb1xb.execute-api.eu-west-1.amazonaws.com/dev/";
 
   test("she should be able to watch a new video", () => {
     const url = `${apiBasePath}/user/${userId}/stream`;
