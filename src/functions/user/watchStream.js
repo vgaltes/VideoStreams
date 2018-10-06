@@ -1,5 +1,18 @@
 const AWS = require("aws-sdk");
 
+function insertVideoStream(userId, videoId) {
+  const params = {
+    TableName: process.env.videoStreamsTableName,
+    Item: {
+      userId,
+      videoId
+    }
+  };
+
+  const dynamoDb = new AWS.DynamoDB.DocumentClient();
+  return dynamoDb.put(params).promise();
+}
+
 module.exports.handler = async (event, context, callback) => {
   const params = {
     TableName: process.env.videoStreamsTableName,
@@ -21,6 +34,8 @@ module.exports.handler = async (event, context, callback) => {
   }
 
   const req = JSON.parse(event.body);
+
+  await insertVideoStream(event.pathParameters.user_id, req.video_id);
 
   const response = {
     statusCode: 200,
