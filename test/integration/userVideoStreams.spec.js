@@ -66,30 +66,6 @@ describe("Given a user is not watching any video stream", () => {
   });
 });
 
-describe("Given a user is already watching three video streams", () => {
-  const userId = uuidv4();
-  const videoId = uuidv4();
-
-  beforeAll(async () => {
-    // TODO: retrieve from SSM. Probably refactor to another file.
-    process.env.videoStreamsTableName = "videoStreams-dev";
-
-    await fillUserVideoStreams(userId, 3);
-  });
-
-  test("she shouldn't be able to watch a new video", async () => {
-    const response = await callHandler(
-      { video_id: videoId },
-      { user_id: userId }
-    );
-
-    expect(response.statusCode).toBe(403);
-    expect(response.body).toEqual({
-      message: "User watching too many video streams."
-    });
-  });
-});
-
 describe("Given a user is already watching two video streams", () => {
   const userId = uuidv4();
   const videoId = uuidv4();
