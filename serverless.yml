@@ -1,0 +1,18 @@
+service: videoStreams
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: eu-west-1
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  region: ${opt:region, self:provider.region}
+
+functions:
+  watchStream:
+    handler: src/functions/user/watchStream.handler
+    events:
+      - http:
+          path: user/{user_id}/stream
+          method: post

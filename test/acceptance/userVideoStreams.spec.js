@@ -1,12 +1,12 @@
 const http = require("superagent");
+const uuidv4 = require("uuid/v4");
 
 describe("Given a user is not watching any video stream", () => {
-  // TODO: create a new userId, using uuid to avoid collisions
-  const userId = 1;
-  // TODO: create a new videoId, using uuid to avoid collisions
-  const videoId = 1;
-  // get the api_url from SSM. For now, let's have it hardcoded.
-  const apiBasePath = "";
+  const userId = uuidv4();
+  const videoId = uuidv4();
+  // TODO: get the api_url from SSM. For now, let's have it hardcoded.
+  const apiBasePath =
+    "https://ivgph7b9s5.execute-api.eu-west-1.amazonaws.com/dev/";
 
   test("she should be able to watch a new video", () => {
     const url = `${apiBasePath}/user/${userId}/stream`;
