@@ -6,11 +6,14 @@ const videoStreamsDb = require("../../lib/videoStreamsDb");
 const apiBasePath =
   "https://8yocvbb1xb.execute-api.eu-west-1.amazonaws.com/dev/";
 
-function callHttp(url, body) {
-  return http
-    .post(url)
-    .send(JSON.stringify(body))
-    .set("accept", "json");
+function callHttp(url, verb, body) {
+  const request = http(verb, url).set("accept", "json");
+
+  if (body) {
+    request.send(JSON.stringify(body));
+  }
+
+  return request;
 }
 
 describe("Given a user is not watching any video stream", () => {
@@ -19,7 +22,7 @@ describe("Given a user is not watching any video stream", () => {
 
   test("she should be able to watch a new video", () => {
     const url = `${apiBasePath}/user/${userId}/stream`;
-    return callHttp(url, { video_id: videoId }).then(res => {
+    return callHttp(url, "POST", { video_id: videoId }).then(res => {
       expect(res.ok).toBe(true);
       expect(res.body).toEqual({
         video_id: videoId
@@ -40,16 +43,26 @@ describe("Given a user is already watching two video streams", () => {
   });
 
   test("she should be able to watch a new video, but not another one", async () => {
-    const url = `${apiBasePath}/user/${userId}/stream`;
-    await callHttp(url, { video_id: videoId }).then(response => {
+    const watchUrl = `${apiBasePath}/user/${userId}/stream`;
+    const listUrl = `${apiBasePath}/user/${userId}/streams`;
+    await callHttp(watchUrl, "POST", { video_id: videoId }).then(response => {
       expect(response.statusCode).toBe(200);
     });
 
-    return callHttp(url, { video_id: uuidv4() }).catch(err => {
+    await callHttp(watchUrl, "POST", { video_id: uuidv4() }).catch(err => {
       expect(err.response.statusCode).toBe(403);
       expect(err.response.body).toEqual({
         message: "User watching too many video streams."
       });
     });
+
+    return callHttp(listUrl, "GET")
+      .then(response => {
+        expect(response.statusCode).toBe(200);
+        expect(response.body.streams.length).toBe(3);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   });
 });

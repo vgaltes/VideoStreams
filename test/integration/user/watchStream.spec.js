@@ -1,8 +1,9 @@
 const uuidv4 = require("uuid/v4");
 const watchStream = require("../../../src/functions/user/watchStream");
+const listStreams = require("../../../src/functions/user/listStreams");
 const videoStreamsDb = require("../../lib/videoStreamsDb");
 
-function callHandler(body, pathParameters) {
+function callHandler(lambda, pathParameters, body) {
   const context = {};
   const event = {
     body: JSON.stringify(body),
@@ -10,7 +11,7 @@ function callHandler(body, pathParameters) {
   };
 
   return new Promise((resolve, reject) => {
-    watchStream.handler(event, context, (err, response) => {
+    lambda.handler(event, context, (err, response) => {
       if (err) {
         reject(err);
       } else {
@@ -32,8 +33,9 @@ describe("Given a user is not watching any video stream", () => {
 
   test("she should be able to watch a new video", async () => {
     const response = await callHandler(
-      { video_id: videoId },
-      { user_id: userId }
+      watchStream,
+      { user_id: userId },
+      { video_id: videoId }
     );
 
     expect(response.statusCode).toBe(200);
@@ -56,15 +58,24 @@ describe("Given a user is already watching two video streams", () => {
 
   test("she should be able to watch a new video, but not another one", async () => {
     let response = await callHandler(
-      { video_id: videoId },
-      { user_id: userId }
+      watchStream,
+      { user_id: userId },
+      { video_id: videoId }
     );
     expect(response.statusCode).toBe(200);
 
-    response = await callHandler({ video_id: uuidv4() }, { user_id: userId });
+    response = await callHandler(
+      watchStream,
+      { user_id: userId },
+      { video_id: uuidv4() }
+    );
     expect(response.statusCode).toBe(403);
     expect(response.body).toEqual({
       message: "User watching too many video streams."
     });
+
+    response = await callHandler(listStreams, { user_id: userId });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.streams.length).toBe(3);
   });
 });

@@ -33,14 +33,15 @@ module.exports.handler = async (event, context, callback) => {
     .getVideoStreamsFromUser(userId, process.env.videoStreamsTableName)
     .then(results => {
       if (results.Count === 3) {
-        callback(
-          null,
-          response(403, {
-            message: "User watching too many video streams."
-          })
+        return Promise.resolve(
+          callback(
+            null,
+            response(403, {
+              message: "User watching too many video streams."
+            })
+          )
         );
       }
-
       return videoStreamRepository
         .insertVideoStream(
           userId,

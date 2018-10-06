@@ -29,6 +29,19 @@ functions:
           - dynamodb:Query
           - dynamodb:PutItem
         Resource: "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.videoStreamsTableName}"
+  listStreams:
+    handler: src/functions/user/listStreams.handler
+    events:
+      - http:
+          path: user/{user_id}/streams
+          method: get
+    environment:
+      videoStreamsTableName: ${self:custom.videoStreamsTableName}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.videoStreamsTableName}"
 
 resources:
   Resources:
