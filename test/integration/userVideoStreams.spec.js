@@ -7,7 +7,7 @@ AWS.config.update({ region: "eu-west-1" });
 function callHandler(body, pathParameters) {
   const context = {};
   const event = {
-    body,
+    body: JSON.stringify(body),
     pathParameters
   };
 

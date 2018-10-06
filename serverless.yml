@@ -1,5 +1,9 @@
 service: videoStreams
 
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+
 provider:
   name: aws
   runtime: nodejs8.10
@@ -17,6 +21,13 @@ functions:
       - http:
           path: user/{user_id}/stream
           method: post
+    environment:
+      videoStreamsTableName: ${self:custom.videoStreamsTableName}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.videoStreamsTableName}"
 
 resources:
   Resources:

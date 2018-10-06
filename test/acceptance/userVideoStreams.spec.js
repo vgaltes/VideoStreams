@@ -12,7 +12,7 @@ describe("Given a user is not watching any video stream", () => {
     const url = `${apiBasePath}/user/${userId}/stream`;
     return http
       .post(url)
-      .send({ video_id: videoId })
+      .send(JSON.stringify({ video_id: videoId }))
       .set("accept", "json")
       .then(res => {
         expect(res.ok).toBe(true);

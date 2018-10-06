@@ -20,9 +20,13 @@ module.exports.handler = async (event, context, callback) => {
     callback(null, response);
   }
 
+  const req = JSON.parse(event.body);
+
   const response = {
     statusCode: 200,
-    body: JSON.stringify({ video_id: event.body.video_id })
+    body: JSON.stringify({
+      video_id: req.video_id
+    })
   };
   callback(null, response);
 };
