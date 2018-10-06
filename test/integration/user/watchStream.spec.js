@@ -1,6 +1,6 @@
 const AWS = require("aws-sdk");
 const uuidv4 = require("uuid/v4");
-const watchStream = require("../../src/functions/user/watchStream");
+const watchStream = require("../../../src/functions/user/watchStream");
 
 AWS.config.update({ region: "eu-west-1" });
 

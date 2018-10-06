@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --coverage --config=unitTestsJestConfig.json",
     "lint": "eslint \"./**/*.js\" --fix",
-    "test:acceptance": "jest ./test/acceptance/*.js",
+    "test:acceptance": "jest ./test/acceptance/**/*.js",
     "pretest": "npm run lint",
     "posttest": "npm audit",
     "deploy": "serverless deploy"

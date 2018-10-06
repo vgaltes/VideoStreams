@@ -1,6 +1,6 @@
 const http = require("superagent");
 const uuidv4 = require("uuid/v4");
-const videoStreamsDb = require("../lib/videoStreamsDb");
+const videoStreamsDb = require("../../lib/videoStreamsDb");
 
 // TODO: get the api_url from SSM. For now, let's have it hardcoded.
 const apiBasePath =

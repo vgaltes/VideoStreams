@@ -1,3 +1,3 @@
 {
-  "testPathIgnorePatterns": ["./test/acceptance/*.spec.js"]
+  "testPathIgnorePatterns": ["<rootDir>/test/acceptance/"]
 }
