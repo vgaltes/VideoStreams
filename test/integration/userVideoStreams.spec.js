@@ -36,7 +36,7 @@ function insertVideoStream(userId, videoId) {
   return dynamoDb.put(params).promise();
 }
 
-async function fillUserVideoStreams(userId, numberOfVideos) {
+function fillUserVideoStreams(userId, numberOfVideos) {
   const inserts = [];
   for (let i = 0; i < numberOfVideos; i += 1) {
     inserts.push(insertVideoStream(userId, uuidv4()));
