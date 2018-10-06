@@ -2,7 +2,7 @@ const http = require("superagent");
 const uuidv4 = require("uuid/v4");
 const videoStreamsDb = require("../../lib/videoStreamsDb");
 
-// TODO: get the api_url from SSM. For now, let's have it hardcoded.
+// TODO: we can pass this via environment variables
 const apiBasePath =
   "https://8yocvbb1xb.execute-api.eu-west-1.amazonaws.com/dev/";
 
@@ -33,7 +33,7 @@ describe("Given a user is already watching two video streams", () => {
   const videoId = uuidv4();
 
   beforeAll(async () => {
-    // TODO: retrieve from SSM. Probably refactor to another file.
+    // TODO: get the stage from a environment variable.
     process.env.videoStreamsTableName = "videoStreams-dev";
 
     await videoStreamsDb.fillUserVideoStreams(userId, 2);
