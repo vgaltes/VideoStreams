@@ -32,6 +32,7 @@ In both cases you will need to deploy the service. To do that, you should run `n
   - The video is valid
  - listStreams:
   - The user is valid
+- I haven't added a delete endpoint to remove a video from a user. This should be added in order to a user to stop a video stream. In order to maintain the list of active streams, we can implement a kind of heartbeat. We can store a TTL with our streams. When we have reached the TTL, we remove the video. At the same time, the client makes calls to the heartbeat endpoint. If we store the data on DynamoDB, we'll need to create a service to remove the videos. If we store the data on ElastiCache, we can use the TTL capabilities of the platform.
 - In case we need it to absorb more traffic, we should tune the throughput of our DynamoDB table. We can do this via the serverless.yml file, and assign different values on the different environments.
 - In case DynamoDB wasn't enough, we could move the data storage to something like ElastiCache.
 - Finally you can go multi-region. To do that you should set your DynamoDB table as Global Table, then deploy the API to multiple regions and finally configure Route 53.
