@@ -2,6 +2,8 @@ const videoStreamRepository = require("../../lib/videoStreamRepository");
 const log = require("../../lib/log");
 const response = require("../../lib/response");
 
+const MAX_STREAMS = 3;
+
 module.exports.handler = async (event, context, callback) => {
   const userId = event.pathParameters.user_id;
   const req = JSON.parse(event.body);
@@ -9,7 +11,7 @@ module.exports.handler = async (event, context, callback) => {
   return videoStreamRepository
     .getVideoStreamsFromUser(userId, process.env.videoStreamsTableName)
     .then(results => {
-      if (results.Count === 3) {
+      if (results.Count === MAX_STREAMS) {
         return Promise.resolve(
           callback(
             null,

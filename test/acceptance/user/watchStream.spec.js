@@ -3,6 +3,8 @@ const httpInvoker = require("../../lib/httpInvoker");
 const videoStreamsDb = require("../../lib/videoStreamsDb");
 
 const apiBasePath = process.env.API_BASE_PATH;
+const MAX_STREAMS = 3;
+const aboutToReachMaxStreams = 2;
 
 describe("Given a user is not watching any video stream", () => {
   const userId = uuidv4();
@@ -17,7 +19,7 @@ describe("Given a user is not watching any video stream", () => {
   });
 });
 
-describe("Given a user is already watching two video streams", () => {
+describe("Given a user is already about to reach the maximum number of streams", () => {
   const userId = uuidv4();
   const videoId = uuidv4();
 
@@ -25,7 +27,7 @@ describe("Given a user is already watching two video streams", () => {
     // TODO: get the stage from a environment variable.
     process.env.videoStreamsTableName = "videoStreams-dev";
 
-    await videoStreamsDb.fillUserVideoStreams(userId, 2);
+    await videoStreamsDb.fillUserVideoStreams(userId, aboutToReachMaxStreams);
   });
 
   test("she should be able to watch a new video, but not another one", async () => {
@@ -52,7 +54,7 @@ describe("Given a user is already watching two video streams", () => {
 
     return httpInvoker.call(listUrl, "GET").then(response => {
       expect(response.statusCode).toBe(200);
-      expect(response.body.streams.length).toBe(3);
+      expect(response.body.streams.length).toBe(MAX_STREAMS);
     });
   });
 });
