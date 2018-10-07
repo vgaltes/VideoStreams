@@ -25,6 +25,14 @@ In both cases you will need to deploy the service. To do that, you should run `n
 - I haven't used SSM because I'm not storing any sensible information in environment variables. In case there was a need to change some configuration on the fly (for example, the maximum number of videos a user can watch), we could have this value on SSM and load it in the lambda function, so we shouldn't redeploy the function to make the change.
 - I haven't added any debug logging, just error logging.I could've added some and sample it as explained [here](https://theburningmonk.com/2018/04/you-need-to-sample-debug-logs-in-production/)
 - I haven't added x-ray tracing. We could do that by using the serverless plugin `serverless-plugin-tracing` and giving the service the right permissions. We can also think on using other services like IOPipe or Epsagon.
+- I haven't done any input validation. I could have validated:
+ - watchStreams:
+  - The request has body and the body is what we expect.
+  - The user is valid
+  - The video is valid
+ - listStreams:
+  - The user is valid
 - In case we need it to absorb more traffic, we should tune the throughput of our DynamoDB table. We can do this via the serverless.yml file, and assign different values on the different environments.
 - In case DynamoDB wasn't enough, we could move the data storage to something like ElastiCache.
 - Finally you can go multi-region. To do that you should set your DynamoDB table as Global Table, then deploy the API to multiple regions and finally configure Route 53.
+- In order to debug our system appropriately, we should use correlation id's to be able to follow a request through our system. I haven't done this because I only have one lambda. Another useful thing to do is to ship the logs to some log aggregation tool like Logz.io, Splunk or ElasticSearch. Another option is to use some tool like Epsagon, with the tradeoff to spend some miliseconds in each function doing that.
