@@ -1,17 +1,5 @@
 const videoStreamRepository = require("../../lib/videoStreamRepository");
-
-function logError(message, userId, videoId, err) {
-  console.log(
-    JSON.stringify({
-      message,
-      errorName: err.name,
-      errorMessage: err.message,
-      stackTrace: err.stack,
-      userId,
-      videoId
-    })
-  );
-}
+const log = require("../../lib/log");
 
 function response(statusCode, body) {
   const res = {
@@ -39,7 +27,7 @@ module.exports.handler = async (event, context, callback) => {
       );
     })
     .catch(err => {
-      logError("Error reading video streams from the database.", userId, err);
+      log.Error("Error reading video streams from the database.", userId, err);
       callback(null, response(500));
     });
 };
