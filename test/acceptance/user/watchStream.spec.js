@@ -2,9 +2,7 @@ const uuidv4 = require("uuid/v4");
 const httpInvoker = require("../../lib/httpInvoker");
 const videoStreamsDb = require("../../lib/videoStreamsDb");
 
-// TODO: we can pass this via environment variables
-const apiBasePath =
-  "https://8yocvbb1xb.execute-api.eu-west-1.amazonaws.com/dev/";
+const apiBasePath = process.env.API_BASE_PATH;
 
 describe("Given a user is not watching any video stream", () => {
   const userId = uuidv4();
