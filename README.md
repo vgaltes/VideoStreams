@@ -37,3 +37,8 @@ In both cases you will need to deploy the service. To do that, you should run `n
 - In case DynamoDB wasn't enough, we could move the data storage to something like ElastiCache.
 - Finally you can go multi-region. To do that you should set your DynamoDB table as Global Table, then deploy the API to multiple regions and finally configure Route 53.
 - In order to debug our system appropriately, we should use correlation id's to be able to follow a request through our system. I haven't done this because I only have one lambda. Another useful thing to do is to ship the logs to some log aggregation tool like Logz.io, Splunk or ElasticSearch. Another option is to use some tool like Epsagon, with the tradeoff to spend some miliseconds in each function doing that.
+
+## Extra ball
+(comment written after submission)
+
+I've beem thinking about the API and another possibility would be to do something like `stream/streamId/watch` and pass the userId in the body, or in a header, or let the lambda take it from cognito. I decided to do the other way because the way the exercise is describred drove me to that implementation, as it looks like more user centric. Depending on how the API will evolve, maybe it could be a good idea to change it. For example, do we want to know how many users are watching a stream? Another thing to consider is which kind of API is more cachable, or when the cache will be more efficient.
