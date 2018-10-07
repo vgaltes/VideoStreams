@@ -1,17 +1,6 @@
 const videoStreamRepository = require("../../lib/videoStreamRepository");
 const log = require("../../lib/log");
-
-function response(statusCode, body) {
-  const res = {
-    statusCode
-  };
-
-  if (body) {
-    res.body = JSON.stringify(body);
-  }
-
-  return res;
-}
+const response = require("../../lib/response");
 
 module.exports.handler = async (event, context, callback) => {
   const userId = event.pathParameters.user_id;
@@ -24,7 +13,7 @@ module.exports.handler = async (event, context, callback) => {
         return Promise.resolve(
           callback(
             null,
-            response(403, {
+            response.failure(403, {
               message: "User watching too many video streams."
             })
           )
@@ -37,12 +26,7 @@ module.exports.handler = async (event, context, callback) => {
           process.env.videoStreamsTableName
         )
         .then(() => {
-          callback(
-            null,
-            response(200, {
-              video_id: req.video_id
-            })
-          );
+          callback(null, response.success({ video_id: req.video_id }));
         })
         .catch(err => {
           log.Error(
@@ -52,7 +36,7 @@ module.exports.handler = async (event, context, callback) => {
             err
           );
 
-          callback(null, response(500));
+          callback(null, response.failure(500));
         });
     })
     .catch(err => {
@@ -63,6 +47,6 @@ module.exports.handler = async (event, context, callback) => {
         err
       );
 
-      callback(null, response(500));
+      callback(null, response.failure(500));
     });
 };
