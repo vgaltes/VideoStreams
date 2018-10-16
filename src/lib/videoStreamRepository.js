@@ -1,19 +1,6 @@
 const AWS = require("aws-sdk");
 
-module.exports.insertVideoStream = (userId, videoId, tableName) => {
-  const params = {
-    TableName: tableName,
-    Item: {
-      userId,
-      videoId
-    }
-  };
-
-  const dynamoDb = new AWS.DynamoDB.DocumentClient();
-  return dynamoDb.put(params).promise();
-};
-
-module.exports.getVideoStreamsFromUser = async (userId, tableName) => {
+async function getUserVideos(tableName, userId, docClient) {
   const params = {
     TableName: tableName,
     KeyConditionExpression: "userId = :userId",
@@ -22,7 +9,66 @@ module.exports.getVideoStreamsFromUser = async (userId, tableName) => {
     }
   };
 
+  const results = await docClient.query(params).promise();
+  if (results.Count === 0) return [];
+  return results.Items[0].videos;
+}
+
+function updateUserVideos(tableName, userId, videoId, docClient) {
+  const params = {
+    TableName: tableName,
+    Key: { userId },
+    UpdateExpression: "set #attrName = list_append(#attrName, :v)",
+    ExpressionAttributeNames: {
+      "#attrName": "videos"
+    },
+    ExpressionAttributeValues: { ":v": [videoId], ":maxVideos": 3 },
+    ConditionExpression: "size(videos) < :maxVideos",
+    ReturnValues: "UPDATED_NEW"
+  };
+  return docClient
+    .update(params)
+    .promise()
+    .catch(err => {
+      let message = "";
+      if (err.code === "ConditionalCheckFailedException") {
+        message = "MAX_VIDEOS_REACHED";
+      } else {
+        message = "DB_ERROR";
+      }
+      throw new Error(message, err);
+    });
+}
+
+function putUserVideo(tableName, userId, videoId, docClient) {
+  const putParams = {
+    TableName: tableName,
+    Key: { userId },
+    Item: { userId, videos: [videoId] },
+    ConditionExpression: "attribute_not_exists(userId)"
+  };
+
+  return docClient.put(putParams).promise();
+}
+
+module.exports.insertVideoStream = async (userId, videoId, tableName) => {
+  const docClient = new AWS.DynamoDB.DocumentClient();
+
+  const userVideos = await getUserVideos(tableName, userId, docClient);
+  if (userVideos.length === 0) {
+    return putUserVideo(tableName, userId, videoId, docClient).catch(err => {
+      if (err.code === "ConditionalCheckFailedException") {
+        return updateUserVideos(tableName, userId, videoId, docClient);
+      }
+      throw err;
+    });
+  }
+
+  return updateUserVideos(tableName, userId, videoId, docClient);
+};
+
+module.exports.getVideoStreamsFromUser = async (userId, tableName) => {
   const dynamoDb = new AWS.DynamoDB.DocumentClient();
-  const results = await dynamoDb.query(params).promise();
-  return results;
+
+  return getUserVideos(tableName, userId, dynamoDb);
 };

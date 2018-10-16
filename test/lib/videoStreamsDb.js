@@ -3,12 +3,12 @@ const uuidv4 = require("uuid/v4");
 
 AWS.config.update({ region: "eu-west-1" });
 
-function insertVideoStream(userId, videoId) {
+function insertVideoStream(userId, videos) {
   const params = {
     TableName: process.env.videoStreamsTableName,
     Item: {
       userId,
-      videoId
+      videos
     }
   };
 
@@ -17,9 +17,9 @@ function insertVideoStream(userId, videoId) {
 }
 
 module.exports.fillUserVideoStreams = (userId, numberOfVideos) => {
-  const inserts = [];
+  const videos = [];
   for (let i = 0; i < numberOfVideos; i += 1) {
-    inserts.push(insertVideoStream(userId, uuidv4()));
+    videos.push(uuidv4());
   }
-  return Promise.all(inserts);
+  return insertVideoStream(userId, videos);
 };

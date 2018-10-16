@@ -13,7 +13,7 @@ module.exports.call = (lambda, pathParameters, body) => {
       if (err) {
         reject(err);
       } else {
-        response.body = JSON.parse(response.body);
+        if (response.body) response.body = JSON.parse(response.body);
         resolve(response);
       }
     });

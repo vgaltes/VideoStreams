@@ -7,8 +7,7 @@ module.exports.handler = async (event, context, callback) => {
 
   return videoStreamRepository
     .getVideoStreamsFromUser(userId, process.env.videoStreamsTableName)
-    .then(results => {
-      const streams = results.Items.map(r => r.videoId);
+    .then(streams => {
       callback(null, response.success({ streams }));
     })
     .catch(err => {

@@ -48,7 +48,6 @@ describe("Given a user is already about to reach the maximum number of streams",
       { video_id: videoId }
     );
     expect(response.statusCode).toBe(200);
-
     response = await lambdaInvoker.call(
       watchStream,
       { user_id: userId },
@@ -58,7 +57,6 @@ describe("Given a user is already about to reach the maximum number of streams",
     expect(response.body).toEqual({
       message: "User watching too many video streams."
     });
-
     response = await lambdaInvoker.call(listStreams, { user_id: userId });
     expect(response.statusCode).toBe(200);
     expect(response.body.streams.length).toBe(MAX_STREAMS);

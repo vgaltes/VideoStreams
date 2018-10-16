@@ -52,13 +52,13 @@ resources:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-          - AttributeName: videoId
-            AttributeType: S
+          # - AttributeName: videoId
+          #   AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
-          - AttributeName: videoId
-            KeyType: RANGE
+          # - AttributeName: videoId
+          #   KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
