@@ -11,18 +11,18 @@ async function getUserVideos(tableName, userId, docClient) {
 
   const results = await docClient.query(params).promise();
   if (results.Count === 0) return [];
-  return results.Items[0].videos;
+  return results.Items[0].videos ? results.Items[0].videos.values : [];
 }
 
 function updateUserVideos(tableName, userId, videoId, docClient) {
   const params = {
     TableName: tableName,
     Key: { userId },
-    UpdateExpression: "set #attrName = list_append(#attrName, :v)",
-    ExpressionAttributeNames: {
-      "#attrName": "videos"
+    UpdateExpression: "ADD videos :v",
+    ExpressionAttributeValues: {
+      ":v": docClient.createSet([videoId]),
+      ":maxVideos": 3
     },
-    ExpressionAttributeValues: { ":v": [videoId], ":maxVideos": 3 },
     ConditionExpression: "size(videos) < :maxVideos",
     ReturnValues: "UPDATED_NEW"
   };
@@ -44,7 +44,7 @@ function putUserVideo(tableName, userId, videoId, docClient) {
   const putParams = {
     TableName: tableName,
     Key: { userId },
-    Item: { userId, videos: [videoId] },
+    Item: { userId, videos: docClient.createSet([videoId]) },
     ConditionExpression: "attribute_not_exists(userId)"
   };
 
@@ -71,4 +71,30 @@ module.exports.getVideoStreamsFromUser = async (userId, tableName) => {
   const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
   return getUserVideos(tableName, userId, dynamoDb);
+};
+
+module.exports.removeVideoStream = (userId, videoId, tableName) => {
+  const docClient = new AWS.DynamoDB.DocumentClient();
+  const params = {
+    TableName: tableName,
+    Key: { userId },
+    UpdateExpression: "DELETE videos :v",
+    ExpressionAttributeValues: {
+      ":v": docClient.createSet(videoId),
+      ":vs": videoId
+    },
+    ConditionExpression: "attribute_exists(userId) and contains(videos, :vs)"
+  };
+  return docClient
+    .update(params)
+    .promise()
+    .catch(err => {
+      let message = "";
+      if (err.code === "ConditionalCheckFailedException") {
+        message = "NOT_FOUND";
+      } else {
+        message = "DB_ERROR";
+      }
+      throw new Error(message, err);
+    });
 };

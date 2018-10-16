@@ -11,7 +11,7 @@ module.exports.handler = async (event, context, callback) => {
       callback(null, response.success({ streams }));
     })
     .catch(err => {
-      log.Error("Error reading video streams from the database.", userId, err);
+      log.error("Error reading video streams from the database.", userId, err);
       callback(null, response.failure(500));
     });
 };
